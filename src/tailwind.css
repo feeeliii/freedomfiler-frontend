@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+.vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(360deg);
+  }
+  
+  .normal-orientation {
+    display: inline-block;
+    transform: rotate(360deg);
+  }
+  
