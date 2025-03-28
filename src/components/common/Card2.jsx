@@ -7,9 +7,15 @@ const Card = ({ children, title, showFooterText = true }) => {
         <h1 className='font-["Ranchers"] text-[#DD2634] leading-tight text-5xl font-bold mb-1'>{title}</h1>
       </div>
       
-      {/* Container for card and vertical text */}
+      {/* Container für Card und roten Hintergrund */}
       <div className="w-full px-4 -mt-3 relative">
-        <div className="flex justify-center">
+        {/* Rotes Hintergrundelement */}
+        <div 
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[1100px] h-[600px] rounded-full bg-[#EC1119] opacity-20 z-0"
+          style={{ filter: "blur(150px)" }}
+        />
+        
+        <div className="flex justify-center relative z-10">
           {/* Main card */}
           <div className="bg-white rounded-lg shadow-md 
                         w-[95%] h-[555px]

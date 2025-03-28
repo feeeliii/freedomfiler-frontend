@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Button = ({
     children,
     type = 'button',
-    variant = 'navForward', // Standard-Variante für Stil, Größe und Inhalt
+    variant = 'navForward',
     className = '',
     onClick,
     disabled = false,
@@ -21,7 +21,7 @@ const Button = ({
         login: "bg-[#FFE1DE] text-[#EC1119] hover:bg-[#ffd1cc] transition-colors font-bold",
         navForward: "bg-[#EC1119] text-white hover:bg-[#d10f16] transition-colors border border-[#EC1119]",
         navBack: "bg-[#FFE1DE] text-[#EC1119] hover:bg-[#ffd1cc] border border-[#EC1119]",
-        newKlage: "bg-[#FFE1DE] text-[#EC1119] text-xl hover:bg-[#ffd1cc] transition-colors font-bold border border-[#EC1119]",
+        newKlage: "bg-[#FFE1DE] text-[#EC1119] text-xl hover:bg-[#ffd1cc] transition-colors font-bold border border-2 border-[#EC1119]",
         download: "bg-[#FFE1DE] text-[#EC1119] hover:bg-[#ffd1cc] transition-colors font-bold"
     };
     
