@@ -11,6 +11,7 @@ import Summary from "./components/pages/Summary.jsx";
 import Download from "./components/pages/Download.jsx";
 import Test from "./components/pages/Test.jsx";
 import Layout from "./components/layout/Layout.jsx";
+import LoginZwei from "./components/pages/LoginZwei.jsx";
 
 
 console.log("Main.jsx is running");
@@ -27,6 +28,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Route path="/summary" element={<Summary />} />
           <Route path="/download" element={<Download />} />
           <Route path="/test" element={<Test />} />
+          <Route path="/loginzwei" element={<LoginZwei />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Layout>

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import PageLayout from "../layout/CardWithHeader";
 
 function ReasonsOfDenial() {
-  const [selectedLaw, setSelectedLaw] = useState("IFG"); // Standard: IFG
+  const { klageId } = useParams(); // Annahme: Die Klage-ID kommt aus der URL??
+  const [selectedLaw, setSelectedLaw] = useState("IFG");
   const [reasons, setReasons] = useState([]);
   const [selectedReasons, setSelectedReasons] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -14,9 +16,35 @@ function ReasonsOfDenial() {
       try {
         setLoading(true);
         
-        // Beispieldaten basierend auf dem ausgewählten Gesetz
-        let mockData = [];
+        // API-Aufruf zum Laden der Ablehnungsgründe
+        const response = await fetch(`http://localhost:5000/api/denial-reasons?law=${selectedLaw}`);
         
+        if (!response.ok) {
+          throw new Error('Fehler beim Laden der Ablehnungsgründe');
+        }
+        
+        const data = await response.json();
+        setReasons(data);
+        
+        // Lade bereits gespeicherte Auswahl, falls vorhanden
+        if (klageId) {
+          const savedResponse = await fetch(`http://localhost:5000/api/klagen/${klageId}/selected-reasons`);
+          
+          if (savedResponse.ok) {
+            const savedData = await savedResponse.json();
+            if (savedData.law === selectedLaw) {
+              setSelectedReasons(savedData.selectedReasons);
+            }
+          }
+        }
+        
+        setError(null);
+      } catch (err) {
+        console.error("Fehler beim Laden der Ablehnungsgründe:", err);
+        setError("Die Ablehnungsgründe konnten nicht geladen werden.");
+        
+        // Fallback auf Mock-Daten bei Fehlern (nur für Entwicklung)
+        let mockData = [];
         if (selectedLaw === "IFG") {
           mockData = [
             { id: "ifg_1", title: "§ 3 IFG" },
@@ -35,39 +63,52 @@ function ReasonsOfDenial() {
             { id: "uig_5", title: "§ 10 UIG" },
           ];
         }
-        
         setReasons(mockData);
-        // Zurücksetzen der ausgewählten Gründe beim Wechsel des Gesetzes
-        setSelectedReasons([]);
-        setError(null);
-      } catch (err) {
-        console.error("Fehler beim Laden der Ablehnungsgründe:", err);
-        setError("Die Ablehnungsgründe konnten nicht geladen werden.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchReasons();
-  }, [selectedLaw]); // Neu laden, wenn sich das ausgewählte Gesetz ändert
+  }, [selectedLaw, klageId]);
 
-  // Toggle Auswahl eines Ablehnungsgrunds ohne Navigation
-  const toggleReason = (reasonId) => {
-    // Aktualisiere die ausgewählten Gründe
-    setSelectedReasons(prevSelected => {
-      const newSelectedReasons = prevSelected.includes(reasonId)
-        ? prevSelected.filter(id => id !== reasonId)
-        : [...prevSelected, reasonId];
+  // Toggle Auswahl eines Ablehnungsgrunds
+  const toggleReason = async (reasonId) => {
+    try {
+      // Aktualisiere die ausgewählten Gründe
+      const newSelectedReasons = selectedReasons.includes(reasonId)
+        ? selectedReasons.filter(id => id !== reasonId)
+        : [...selectedReasons, reasonId];
       
-      // Speichere die Auswahl im localStorage für die nächste Seite
+      setSelectedReasons(newSelectedReasons);
+      
+      // Speichere die Auswahl im localStorage als Fallback
       localStorage.setItem('selectedReasons', JSON.stringify(newSelectedReasons));
       localStorage.setItem('selectedLaw', selectedLaw);
       
+      // Speichere die Auswahl in der Datenbank, wenn eine klageId vorhanden ist
+      if (klageId) {
+        const response = await fetch(`http://localhost:5000/api/klagen/${klageId}/save-reasons`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            law: selectedLaw,
+            selectedReasons: newSelectedReasons
+          })
+        });
+        
+        if (!response.ok) {
+          console.error('Fehler beim Speichern der Ablehnungsgründe');
+        }
+      }
+      
       console.log("Ausgewähltes Gesetz:", selectedLaw);
       console.log("Ausgewählte Ablehnungsgründe:", newSelectedReasons);
-      
-      return newSelectedReasons;
-    });
+    } catch (err) {
+      console.error("Fehler beim Speichern:", err);
+    }
   };
 
   return (

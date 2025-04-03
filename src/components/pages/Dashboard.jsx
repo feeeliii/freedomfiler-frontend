@@ -14,13 +14,21 @@ function Dashboard() {
     navigate(`/klage/${klageId}`);
   };
   
+  // Handler für den "Neue Klage" Button
+  const handleNewKlage = () => {
+    navigate('/neue-klage');
+  };
+  
   return (
     <div>
       <PageLayout title="Dashboard">
         <div className='flex flex-col items-center justify-center mt-10'>
-          <Button variant='newKlage' className='mb-4'></Button>
+          <Button 
+            variant='newKlage' 
+            className='mb-4'
+            onClick={handleNewKlage}
+          ></Button>
           <div className="max-w-[600px] mt-8 w-full">
-            {/* Hier wird das Grid-Template definiert: 40% für erste Spalte, 40% für zweite, 20% für dritte */}
             <div className="grid grid-cols-[40%_40%_20%] bg-gray-100 rounded font-bold">
                 <div className="py-3 px-4">Kläger*in</div>
                 <div className="py-3 px-4">Beklagte</div>
